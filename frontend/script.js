@@ -4,7 +4,7 @@
  */
 
 // ─── Config ───────────────────────────────────────────────
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://ai-career-predictor-2csq.onrender.com/api";
 
 // ─── State ────────────────────────────────────────────────
 const state = {
