@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Career Path Predictor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ══════════════ HEADER ══════════════ -->
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">CareerAI</span>
+    </div>
+    <nav class="header-nav">
+      <a href="#analyzer" class="nav-link active">Analyzer</a>
+      <a href="#results" class="nav-link">Results</a>
+      <a href="#chat" class="nav-link">Chat</a>
+    </nav>
+    <div class="header-badge">Powered by Claude</div>
+  </div>
+</header>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="grid-lines"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-tag">🧠 AI-Powered Career Intelligence</div>
+    <h1 class="hero-title">
+      Predict Your<br/>
+      <span class="accent">Dream Career</span><br/>
+      With AI Precision
+    </h1>
+    <p class="hero-subtitle">
+      Enter your skills. Get personalized career paths, skill gap analysis, 
+      and a step-by-step learning roadmap — powered by Claude AI.
+    </p>
+    <a href="#analyzer" class="hero-cta">Start Analysis <span>→</span></a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><strong>50+</strong><span>Career Paths</span></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><strong>AI</strong><span>Skill Matching</span></div>
+    <div class="stat-divider"></div>
+    <div class="stat"><strong>100%</strong><span>Personalized</span></div>
+  </div>
+</section>
+
+<!-- ══════════════ ANALYZER FORM ══════════════ -->
+<section class="analyzer-section" id="analyzer">
+  <div class="section-label">Step 01 / Input</div>
+  <h2 class="section-title">Tell Us About Yourself</h2>
+
+  <div class="form-card">
+
+    <!-- Skills Input -->
+    <div class="form-group">
+      <label class="form-label">
+        <span class="label-icon">💡</span> Your Current Skills
+        <span class="label-hint">Press Enter or comma to add</span>
+      </label>
+      <div class="tag-input-wrapper" id="skills-wrapper">
+        <div class="tags-container" id="skills-tags"></div>
+        <input type="text" id="skills-input" class="tag-input" 
+               placeholder="e.g. Python, Excel, Communication..." 
+               autocomplete="off"/>
+      </div>
+      <div class="quick-add-row">
+        <span class="quick-label">Quick add:</span>
+        <button class="quick-btn" onclick="addQuickSkill('Python')">Python</button>
+        <button class="quick-btn" onclick="addQuickSkill('JavaScript')">JavaScript</button>
+        <button class="quick-btn" onclick="addQuickSkill('SQL')">SQL</button>
+        <button class="quick-btn" onclick="addQuickSkill('Excel')">Excel</button>
+        <button class="quick-btn" onclick="addQuickSkill('Machine Learning')">ML</button>
+        <button class="quick-btn" onclick="addQuickSkill('React')">React</button>
+      </div>
+    </div>
+
+    <!-- Interests Input -->
+    <div class="form-group">
+      <label class="form-label">
+        <span class="label-icon">🎯</span> Your Interests & Passions
+        <span class="label-hint">Press Enter or comma to add</span>
+      </label>
+      <div class="tag-input-wrapper" id="interests-wrapper">
+        <div class="tags-container" id="interests-tags"></div>
+        <input type="text" id="interests-input" class="tag-input" 
+               placeholder="e.g. Problem Solving, Data, Design..."
+               autocomplete="off"/>
+      </div>
+      <div class="quick-add-row">
+        <span class="quick-label">Quick add:</span>
+        <button class="quick-btn" onclick="addQuickInterest('Data Analysis')">Data</button>
+        <button class="quick-btn" onclick="addQuickInterest('AI & ML')">AI/ML</button>
+        <button class="quick-btn" onclick="addQuickInterest('Web Development')">Web Dev</button>
+        <button class="quick-btn" onclick="addQuickInterest('Finance')">Finance</button>
+        <button class="quick-btn" onclick="addQuickInterest('Design')">Design</button>
+      </div>
+    </div>
+
+    <!-- Experience + Goals Row -->
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">
+          <span class="label-icon">📊</span> Experience Level
+        </label>
+        <div class="experience-options">
+          <label class="exp-option">
+            <input type="radio" name="experience" value="Beginner" checked/>
+            <span class="exp-btn">🌱 Beginner</span>
+          </label>
+          <label class="exp-option">
+            <input type="radio" name="experience" value="Intermediate"/>
+            <span class="exp-btn">🔥 Intermediate</span>
+          </label>
+          <label class="exp-option">
+            <input type="radio" name="experience" value="Advanced"/>
+            <span class="exp-btn">⚡ Advanced</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <span class="label-icon">🚀</span> Career Goals <span class="optional">(optional)</span>
+        </label>
+        <input type="text" id="goals-input" class="text-input"
+               placeholder="e.g. High salary, remote work, startup culture..."/>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button class="analyze-btn" id="analyze-btn" onclick="analyzeCareer()">
+      <span class="btn-text">Analyze My Career Path</span>
+      <span class="btn-icon">⬡</span>
+    </button>
+
+  </div>
+</section>
+
+<!-- ══════════════ LOADING STATE ══════════════ -->
+<div class="loading-overlay" id="loading-overlay" style="display:none">
+  <div class="loading-card">
+    <div class="loading-hexagon">
+      <div class="hex-inner">⬡</div>
+    </div>
+    <div class="loading-steps">
+      <div class="load-step active" id="ls-1">Analyzing your skill profile...</div>
+      <div class="load-step" id="ls-2">Matching to career paths...</div>
+      <div class="load-step" id="ls-3">Identifying skill gaps...</div>
+      <div class="load-step" id="ls-4">Generating your roadmap...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ RESULTS SECTION ══════════════ -->
+<section class="results-section" id="results" style="display:none">
+  <div class="results-header">
+    <div class="section-label">Step 02 / Results</div>
+    <h2 class="section-title">Your Career Analysis</h2>
+    <p class="results-summary" id="summary-text"></p>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="results-tabs">
+    <button class="tab active" data-tab="careers" onclick="switchTab('careers')">
+      🎯 Career Paths
+    </button>
+    <button class="tab" data-tab="skills" onclick="switchTab('skills')">
+      📊 Skill Gaps
+    </button>
+    <button class="tab" data-tab="courses" onclick="switchTab('courses')">
+      📚 Courses
+    </button>
+    <button class="tab" data-tab="roadmap" onclick="switchTab('roadmap')">
+      🗺 Roadmap
+    </button>
+  </div>
+
+  <!-- Career Paths Tab -->
+  <div class="tab-content active" id="tab-careers">
+    <div class="careers-grid" id="careers-container"></div>
+  </div>
+
+  <!-- Skill Gaps Tab -->
+  <div class="tab-content" id="tab-skills">
+    <div class="skills-list" id="skills-container"></div>
+  </div>
+
+  <!-- Courses Tab -->
+  <div class="tab-content" id="tab-courses">
+    <div class="courses-grid" id="courses-container"></div>
+  </div>
+
+  <!-- Roadmap Tab -->
+  <div class="tab-content" id="tab-roadmap">
+    <div class="roadmap-timeline" id="roadmap-container"></div>
+  </div>
+</section>
+
+<!-- ══════════════ CHATBOT ══════════════ -->
+<section class="chat-section" id="chat">
+  <div class="section-label">Step 03 / Ask CareerBot</div>
+  <h2 class="section-title">Chat With Your Career Advisor</h2>
+  <p class="chat-intro">Have follow-up questions? Ask CareerBot anything about careers, skills, or your analysis.</p>
+
+  <div class="chat-container">
+    <div class="chat-messages" id="chat-messages">
+      <div class="chat-msg bot">
+        <div class="msg-avatar">🤖</div>
+        <div class="msg-bubble">
+          Hi! I'm CareerBot 👋 I can answer questions about career paths, 
+          skill development, salary expectations, or anything from your analysis above. 
+          What would you like to know?
+        </div>
+      </div>
+    </div>
+    <div class="chat-suggestions" id="chat-suggestions">
+      <button class="suggestion-btn" onclick="sendSuggestion(this)">What salary can I expect?</button>
+      <button class="suggestion-btn" onclick="sendSuggestion(this)">Which skill should I learn first?</button>
+      <button class="suggestion-btn" onclick="sendSuggestion(this)">How long to get job-ready?</button>
+      <button class="suggestion-btn" onclick="sendSuggestion(this)">Best companies to target?</button>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chat-input" class="chat-input" 
+             placeholder="Ask CareerBot anything..." 
+             onkeydown="if(event.key==='Enter') sendChat()"/>
+      <button class="chat-send-btn" onclick="sendChat()">
+        <span>Send</span> ↑
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-logo">⬡ CareerAI</div>
+    <p class="footer-text">Powered by Anthropic Claude · Built for career seekers worldwide</p>
+    <p class="footer-note">This tool provides AI-generated suggestions. Always validate with industry professionals.</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
