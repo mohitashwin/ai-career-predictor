@@ -3,7 +3,7 @@
    ══════════════════════════════════════════════════════════════════════════════ */
 
 // ── Config ────────────────────────────────────────────────────────────────────
-const API_BASE = "https://YOUR-RENDER-BACKEND.onrender.com"; // ← Replace with your Render URL
+const API_BASE = "https://ai-career-predictor-2csq.onrender.com"; // ← Replace with your Render URL
 // const API_BASE = "http://localhost:5000"; // uncomment for local dev
 
 // ── State ─────────────────────────────────────────────────────────────────────
