@@ -21,7 +21,7 @@ genai.configure(api_key=GEMINI_API_KEY)
 
 ANALYZE_CONFIG = {"temperature": 0.4, "max_output_tokens": 2048}
 CHAT_CONFIG    = {"temperature": 0.7, "max_output_tokens": 600}
-MODEL_NAME     = "gemini-1.5-flash"
+MODEL_NAME = "gemini-2.0-flash"
 
 def get_model():
     return genai.GenerativeModel(MODEL_NAME)
