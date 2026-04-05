@@ -9,267 +9,225 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# ── Logging ────────────────────────────────────────────────────────────────────
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s  %(levelname)-8s  %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
 
-# ── App setup ──────────────────────────────────────────────────────────────────
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app)  # allow all origins
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-if not GEMINI_API_KEY:
-    log.warning("GEMINI_API_KEY is not set – AI features will return fallback data.")
-
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
+log.info("API key present: %s", bool(GEMINI_API_KEY))
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
 
-# ── Helpers ────────────────────────────────────────────────────────────────────
+ANALYZE_CONFIG = {"temperature": 0.4, "max_output_tokens": 2048}
+CHAT_CONFIG    = {"temperature": 0.7, "max_output_tokens": 600}
+MODEL_NAME     = "gemini-1.5-flash"
 
-def extract_json(raw: str) -> dict | None:
-    """Strip markdown fences and return parsed JSON, or None."""
-    # Remove ```json ... ``` or ``` ... ```
+def get_model():
+    return genai.GenerativeModel(MODEL_NAME)
+
+def extract_json(raw):
     cleaned = re.sub(r"```(?:json)?", "", raw).replace("```", "").strip()
     try:
         return json.loads(cleaned)
-    except json.JSONDecodeError:
-        # Last resort: find first { ... } block
+    except Exception:
         m = re.search(r"\{.*\}", cleaned, re.DOTALL)
         if m:
             try:
                 return json.loads(m.group())
-            except json.JSONDecodeError:
+            except Exception:
                 pass
     return None
 
-
-def fallback_response(skills: list, interests: list, level: str) -> dict:
-    """Return a safe, structured fallback when Gemini fails or is unavailable."""
+def fallback_response(skills, interests, level):
     return {
         "career_paths": [
-            {
-                "title": "Software Developer",
-                "match_percentage": 80,
-                "description": "Build scalable applications using your existing technical skills.",
-                "salary_range": "$70,000 – $130,000",
-                "demand": "Very High",
-                "top_companies": ["Google", "Microsoft", "Amazon"],
-            },
-            {
-                "title": "Data Analyst",
-                "match_percentage": 70,
-                "description": "Turn raw data into actionable business insights.",
-                "salary_range": "$60,000 – $110,000",
-                "demand": "High",
-                "top_companies": ["Meta", "Netflix", "Spotify"],
-            },
-            {
-                "title": "Product Manager",
-                "match_percentage": 55,
-                "description": "Lead cross-functional teams to ship great products.",
-                "salary_range": "$90,000 – $150,000",
-                "demand": "High",
-                "top_companies": ["Apple", "Airbnb", "Stripe"],
-            },
+            {"title": "Software Engineer",    "match_percentage": 85, "description": "Build software for India's booming IT sector. Demand is very high across TCS, Infosys, and startups.",         "salary_range": "₹6 LPA – ₹25 LPA",  "demand": "Very High", "top_companies": ["TCS", "Infosys", "Wipro"]},
+            {"title": "Data Analyst",         "match_percentage": 72, "description": "Analyse data to drive business decisions. Strong demand in fintech and e-commerce sectors.",                    "salary_range": "₹4 LPA – ₹18 LPA",  "demand": "High",      "top_companies": ["Flipkart", "Paytm", "Razorpay"]},
+            {"title": "Product Manager",      "match_percentage": 58, "description": "Lead product strategy at India's fastest-growing digital companies.",                                            "salary_range": "₹12 LPA – ₹40 LPA", "demand": "High",      "top_companies": ["Swiggy", "Zomato", "CRED"]},
         ],
         "skill_gaps": [
-            {"skill": "System Design", "importance": "Critical", "level_needed": "Intermediate", "current_level": 20},
-            {"skill": "Cloud (AWS/GCP)", "importance": "High", "level_needed": "Beginner", "current_level": 10},
-            {"skill": "SQL & Databases", "importance": "High", "level_needed": "Intermediate", "current_level": 30},
-            {"skill": "Communication", "importance": "Medium", "level_needed": "Intermediate", "current_level": 50},
+            {"skill": "Data Structures & Algorithms", "importance": "Critical", "level_needed": "Intermediate", "current_level": 25},
+            {"skill": "SQL & Databases",              "importance": "High",     "level_needed": "Intermediate", "current_level": 30},
+            {"skill": "Cloud AWS / Azure",            "importance": "High",     "level_needed": "Beginner",     "current_level": 10},
+            {"skill": "Communication Skills",         "importance": "Medium",   "level_needed": "Intermediate", "current_level": 50},
         ],
         "courses": [
-            {"title": "CS50 – Introduction to Computer Science", "platform": "edX", "duration": "12 weeks", "free": True, "url": "https://cs50.harvard.edu"},
-            {"title": "Google Data Analytics Certificate", "platform": "Coursera", "duration": "6 months", "free": False, "url": "https://coursera.org"},
-            {"title": "AWS Cloud Practitioner", "platform": "AWS", "duration": "8 weeks", "free": False, "url": "https://aws.amazon.com/training"},
-            {"title": "SQL for Data Science", "platform": "Coursera", "duration": "4 weeks", "free": True, "url": "https://coursera.org"},
+            {"title": "Python Bootcamp – Zero to Hero",     "platform": "Udemy",         "duration": "22 hrs",   "free": False, "url": "https://www.udemy.com/course/complete-python-bootcamp/"},
+            {"title": "Data Science & ML Program",          "platform": "Great Learning", "duration": "6 months", "free": True,  "url": "https://www.mygreatlearning.com/academy"},
+            {"title": "The Complete SQL Bootcamp",          "platform": "Udemy",         "duration": "9 hrs",    "free": False, "url": "https://www.udemy.com/course/the-complete-sql-bootcamp/"},
+            {"title": "AWS Cloud Foundations",              "platform": "Great Learning", "duration": "8 weeks",  "free": True,  "url": "https://www.mygreatlearning.com/academy"},
         ],
         "roadmap": [
-            {"month": "Month 1–2", "focus": "Strengthen Core Skills", "tasks": ["Review data structures", "Practice 50 LeetCode problems", "Complete SQL basics"], "milestone": "Coding fluency"},
-            {"month": "Month 3–4", "focus": "Build Projects", "tasks": ["Deploy a full-stack app", "Contribute to open source", "Create a portfolio site"], "milestone": "First public project"},
-            {"month": "Month 5–6", "focus": "Job Readiness", "tasks": ["Optimise LinkedIn & resume", "Apply to 20+ positions", "Mock interviews"], "milestone": "First offer"},
+            {"month": "Month 1-2", "focus": "Strengthen Core Skills",   "tasks": ["Solve 50 DSA problems on LeetCode",  "Complete SQL bootcamp on Udemy",     "Build one Python mini-project"],               "milestone": "Coding fluency"},
+            {"month": "Month 3-4", "focus": "Build Portfolio Projects", "tasks": ["Deploy a full-stack web app",         "Push projects to GitHub",            "Write LinkedIn posts about your projects"],    "milestone": "Portfolio ready"},
+            {"month": "Month 5-6", "focus": "Job Readiness",           "tasks": ["Apply on Naukri.com and LinkedIn",    "Attend campus or off-campus drives", "Practice HR and technical mock interviews"],   "milestone": "First offer"},
         ],
-        "summary": f"Based on your {level} experience with {', '.join(skills[:3]) if skills else 'various skills'}, you have strong potential across tech roles.",
+        "summary": f"Based on your {level} experience with {', '.join(skills[:3]) if skills else 'your current skills'}, you are well-positioned for India's IT industry. Focus on DSA and cloud skills to maximise your CTC. This is demo data — your GEMINI_API_KEY on Render needs to be correctly set for a personalised AI analysis.",
     }
 
-
 ANALYZE_PROMPT = """
-You are a professional career counsellor with deep knowledge of the global job market.
-A user has provided the following profile:
+You are an expert Indian career counsellor for the Indian IT and technology job market.
 
+User profile:
 Skills: {skills}
 Interests: {interests}
 Experience Level: {level}
 Career Goals: {goals}
 
-Return ONLY a single valid JSON object — no prose, no markdown, no code fences.
-The JSON must EXACTLY match this schema:
+Return ONLY one valid JSON object. No text before or after. No markdown. No code fences.
 
+Schema:
 {{
   "career_paths": [
     {{
-      "title": "string",
-      "match_percentage": integer (0-100),
-      "description": "string (2 sentences)",
-      "salary_range": "string e.g. $70,000 – $120,000",
-      "demand": "string: Very High | High | Medium | Low",
-      "top_companies": ["string", "string", "string"]
+      "title": "Job title",
+      "match_percentage": <0-100>,
+      "description": "2 sentences about this role in India.",
+      "salary_range": "₹X LPA – ₹Y LPA",
+      "demand": "Very High or High or Medium or Low",
+      "top_companies": ["Indian/MNC company", "company2", "company3"]
     }}
   ],
   "skill_gaps": [
     {{
-      "skill": "string",
-      "importance": "string: Critical | High | Medium",
-      "level_needed": "string: Beginner | Intermediate | Advanced",
-      "current_level": integer (0-100, estimated from profile)
+      "skill": "Skill name",
+      "importance": "Critical or High or Medium",
+      "level_needed": "Beginner or Intermediate or Advanced",
+      "current_level": <0-100>
     }}
   ],
   "courses": [
     {{
-      "title": "string",
-      "platform": "string",
-      "duration": "string",
-      "free": boolean,
-      "url": "string"
+      "title": "Course title",
+      "platform": "Udemy or Great Learning or NPTEL or Coursera",
+      "duration": "X hrs or X weeks",
+      "free": true or false,
+      "url": "https://real-url.com"
     }}
   ],
   "roadmap": [
     {{
-      "month": "string e.g. Month 1-2",
-      "focus": "string",
-      "tasks": ["string", "string", "string"],
-      "milestone": "string"
+      "month": "Month 1-2",
+      "focus": "Focus area",
+      "tasks": ["task1", "task2", "task3"],
+      "milestone": "Achievement"
     }}
   ],
-  "summary": "string (3-4 sentence personalised overview)"
+  "summary": "3-4 sentences personalised for Indian job market with salary in rupees."
 }}
 
 Rules:
-- Return exactly 3 career_paths ranked by match_percentage descending.
-- Return exactly 4-5 skill_gaps most critical for those careers.
-- Return exactly 4 courses directly addressing the skill_gaps.
-- Return exactly 3 roadmap phases spanning 6 months.
-- All strings must be professional, specific, and personalised to the profile.
-- DO NOT include any text outside the JSON object.
+- Exactly 3 career_paths (ranked by match_percentage descending)
+- Exactly 4 skill_gaps
+- Exactly 4 courses (prefer Udemy and Great Learning, use real URLs)
+- Exactly 3 roadmap phases
+- Salaries MUST be in Indian Rupees LPA format like ₹8 LPA – ₹20 LPA
+- Top companies: mix of Indian companies (TCS, Infosys, Wipro, HCL, Flipkart, Swiggy, Zomato, Ola, Paytm, CRED, Razorpay, Nykaa, Myntra) and relevant MNCs
+- Output only the JSON — nothing else
 """
-
 
 CHAT_PROMPT = """
-You are CareerBot, an expert AI career advisor embedded in CareerAI — a professional career intelligence platform.
-You have access to the user's career analysis:
+You are CareerBot, an expert Indian AI career advisor inside the CareerAI platform.
+You help Indian students and professionals with the Indian IT job market.
 
+Career analysis context:
 {analysis_context}
 
-Chat history so far:
+Chat history:
 {history}
 
-User's new question: {question}
+User question: {question}
 
-Reply in 2-4 sentences. Be specific, actionable, and encouraging.
-Do NOT use bullet points or markdown. Plain conversational text only.
+Reply in 2-4 plain sentences. Focus on Indian companies, Indian salaries in LPA, and practical Indian job search advice (Naukri, LinkedIn, campus placements). No bullet points. No markdown.
 """
 
-# ── Routes ─────────────────────────────────────────────────────────────────────
+@app.route("/", methods=["GET"])
+def index():
+    return jsonify({"message": "CareerAI API running", "version": "2.0.0"})
 
 @app.route("/api/health", methods=["GET"])
 def health():
-    return jsonify({"status": "ok", "model": "gemini-1.5-flash", "version": "2.0.0"})
+    return jsonify({"status": "ok", "model": MODEL_NAME, "version": "2.0.0", "api_key_set": bool(GEMINI_API_KEY)})
 
+@app.route("/api/test", methods=["GET"])
+def test_gemini():
+    if not GEMINI_API_KEY:
+        return jsonify({"error": "GEMINI_API_KEY not set on server"}), 500
+    try:
+        resp = get_model().generate_content("Say hello in one word.")
+        return jsonify({"status": "ok", "gemini_reply": resp.text.strip()})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-@app.route("/api/analyze", methods=["POST"])
+@app.route("/api/analyze", methods=["POST", "OPTIONS"])
 def analyze():
-    data = request.get_json(silent=True) or {}
+    if request.method == "OPTIONS":
+        return jsonify({"ok": True}), 200
+    data      = request.get_json(silent=True) or {}
     skills    = data.get("skills", [])
     interests = data.get("interests", [])
     level     = data.get("level", "Intermediate")
     goals     = data.get("goals", "")
-
-    log.info("Analyze request | skills=%s | interests=%s | level=%s", skills, interests, level)
-
+    log.info("Analyze | skills=%s level=%s", skills, level)
     if not GEMINI_API_KEY:
-        log.warning("No API key – returning fallback.")
         return jsonify(fallback_response(skills, interests, level))
-
     prompt = ANALYZE_PROMPT.format(
-        skills=", ".join(skills) if skills else "not specified",
-        interests=", ".join(interests) if interests else "not specified",
-        level=level,
-        goals=goals or "not specified",
+        skills    = ", ".join(skills)    if skills    else "not specified",
+        interests = ", ".join(interests) if interests else "not specified",
+        level     = level,
+        goals     = goals or "get a good job in India",
     )
-
     try:
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.types.GenerationConfig(
-                temperature=0.4,
-                max_output_tokens=2048,
-            ),
-        )
+        response = get_model().generate_content(prompt, generation_config=ANALYZE_CONFIG)
         raw = response.text
-        log.debug("Raw Gemini response: %s", raw[:300])
-
+        log.info("Analyze response (%d chars): %s", len(raw), raw[:150])
         parsed = extract_json(raw)
         if parsed and "career_paths" in parsed:
-            log.info("Successfully parsed Gemini response.")
             return jsonify(parsed)
-
-        log.warning("JSON parse failed – using fallback. Raw snippet: %s", raw[:200])
+        log.warning("Parse failed, using fallback")
         return jsonify(fallback_response(skills, interests, level))
-
     except Exception as exc:
-        log.error("Gemini API error: %s", exc, exc_info=True)
+        log.error("Analyze error: %s", exc, exc_info=True)
         return jsonify(fallback_response(skills, interests, level))
 
-
-@app.route("/api/chat", methods=["POST"])
+@app.route("/api/chat", methods=["POST", "OPTIONS"])
 def chat():
+    if request.method == "OPTIONS":
+        return jsonify({"ok": True}), 200
     data     = request.get_json(silent=True) or {}
-    question = data.get("message", "").strip()
-    history  = data.get("history", [])          # list of {role, content}
-    context  = data.get("analysis_context", {})
-
-    log.info("Chat request | question=%s", question[:80])
-
+    question = (data.get("message") or "").strip()
+    history  = data.get("history") or []
+    context  = data.get("analysis_context") or {}
+    log.info("Chat | question: %s", question[:100])
     if not question:
         return jsonify({"error": "Empty message"}), 400
-
     if not GEMINI_API_KEY:
-        return jsonify({"reply": "CareerBot is currently offline. Please add your GEMINI_API_KEY to the backend .env file."})
-
-    history_text = "\n".join(
-        f"{m['role'].capitalize()}: {m['content']}" for m in history[-6:]
-    ) or "No prior messages."
-
-    context_text = json.dumps(context, indent=2) if context else "No analysis performed yet."
-
+        return jsonify({"reply": "CareerBot is offline. Please set GEMINI_API_KEY in your Render environment variables."})
+    history_lines = []
+    for m in history[-6:]:
+        role    = str(m.get("role", "user")).capitalize()
+        content = str(m.get("content", ""))
+        history_lines.append(f"{role}: {content}")
+    history_text = "\n".join(history_lines) or "No prior messages."
+    context_text = json.dumps(context, indent=2) if context else "No analysis yet."
     prompt = CHAT_PROMPT.format(
-        analysis_context=context_text,
-        history=history_text,
-        question=question,
+        analysis_context = context_text,
+        history          = history_text,
+        question         = question,
     )
-
     try:
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.types.GenerationConfig(
-                temperature=0.7,
-                max_output_tokens=512,
-            ),
-        )
-        reply = response.text.strip()
-        log.info("Chat reply generated (%d chars)", len(reply))
+        log.info("Calling Gemini for chat response...")
+        response = get_model().generate_content(prompt, generation_config=CHAT_CONFIG)
+        reply = (response.text or "").strip()
+        if not reply:
+            reply = "I could not generate a response. Please rephrase your question."
+        log.info("Chat reply: %s", reply[:100])
         return jsonify({"reply": reply})
-
     except Exception as exc:
-        log.error("Chat API error: %s", exc, exc_info=True)
-        return jsonify({"reply": "I'm having trouble connecting right now. Please try again in a moment."}), 200
+        log.error("Chat error: %s", exc, exc_info=True)
+        return jsonify({"reply": f"Technical error: {str(exc)[:100]}. Please try again."})
 
-
-# ── Entry point ────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=os.getenv("FLASK_DEBUG", "false").lower() == "true")
+    app.run(host="0.0.0.0", port=port, debug=False)
