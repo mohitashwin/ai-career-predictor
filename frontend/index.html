@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CareerAI — AI Career Intelligence Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ══ NAV ══════════════════════════════════════════════════════════════════ -->
+<nav class="nav" id="nav">
+  <div class="nav__logo">
+    <span class="nav__dot"></span>
+    <span class="nav__brand">CareerAI</span>
+  </div>
+  <div class="nav__links">
+    <a href="#analyzer" class="nav__link">Analyzer</a>
+    <a href="#resume"   class="nav__link">Resume</a>
+    <a href="#results"  class="nav__link">Results</a>
+    <a href="#chat"     class="nav__link">Chat</a>
+  </div>
+  <div class="nav__right">
+    <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+      <span class="theme-toggle__icon" id="theme-icon">☀️</span>
+    </button>
+    <div class="nav__badge">Powered by Gemini AI</div>
+  </div>
+</nav>
+
+<!-- ══ HERO ══════════════════════════════════════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero__glow hero__glow--1"></div>
+  <div class="hero__glow hero__glow--2"></div>
+  <div class="hero__noise"></div>
+
+  <div class="hero__content">
+    <div class="hero__pill">
+      <span class="hero__pill-dot"></span>
+      AI-Powered Career Intelligence
+    </div>
+
+    <h1 class="hero__title">
+      Predict Your<br/>
+      <em>Dream</em><br/>
+      Career<br/>
+      With AI
+    </h1>
+
+    <p class="hero__sub">
+      Enter your skills, upload your resume, and get personalised career paths,
+      skill gap analysis, and a step-by-step learning roadmap — powered by Gemini AI.
+    </p>
+
+    <div class="hero__cta-group">
+      <a href="#analyzer" class="btn btn--primary hero__cta">
+        Start Analysis
+        <span class="btn__arrow">→</span>
+      </a>
+      <a href="#resume" class="btn btn--outline hero__cta">
+        Upload Resume
+        <span class="btn__arrow">📄</span>
+      </a>
+    </div>
+
+    <div class="hero__stats">
+      <div class="hero__stat">
+        <span class="hero__stat-num">50+</span>
+        <span class="hero__stat-label">Career Paths</span>
+      </div>
+      <div class="hero__divider"></div>
+      <div class="hero__stat">
+        <span class="hero__stat-num">AI</span>
+        <span class="hero__stat-label">Skill Matching</span>
+      </div>
+      <div class="hero__divider"></div>
+      <div class="hero__stat">
+        <span class="hero__stat-num">100%</span>
+        <span class="hero__stat-label">Personalised</span>
+      </div>
+      <div class="hero__divider"></div>
+      <div class="hero__stat">
+        <span class="hero__stat-num">₹LPA</span>
+        <span class="hero__stat-label">Salary Insights</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ANALYZER ══════════════════════════════════════════════════════════════ -->
+<section class="section" id="analyzer">
+  <div class="container">
+    <div class="section__label">Step 01 / Profile Input</div>
+    <h2 class="section__title">Tell Us About Yourself</h2>
+
+    <div class="form-card">
+
+      <!-- Skills -->
+      <div class="field">
+        <div class="field__header">
+          <label class="field__label">💡 Your Current Skills</label>
+          <span class="field__hint">Press Enter or comma to add</span>
+        </div>
+        <div class="tag-input" id="skills-container">
+          <input id="skills-input" class="tag-input__field" placeholder="e.g. Python, Excel, Communication…" autocomplete="off" />
+        </div>
+        <div class="quick-add" id="skills-quick">
+          <span class="quick-add__label">Quick add:</span>
+          <button class="chip" onclick="addTag('skills','Python')">Python</button>
+          <button class="chip" onclick="addTag('skills','JavaScript')">JavaScript</button>
+          <button class="chip" onclick="addTag('skills','SQL')">SQL</button>
+          <button class="chip" onclick="addTag('skills','Excel')">Excel</button>
+          <button class="chip" onclick="addTag('skills','ML')">ML</button>
+          <button class="chip" onclick="addTag('skills','React')">React</button>
+          <button class="chip" onclick="addTag('skills','Java')">Java</button>
+          <button class="chip" onclick="addTag('skills','Node.js')">Node.js</button>
+        </div>
+      </div>
+
+      <!-- Interests -->
+      <div class="field">
+        <div class="field__header">
+          <label class="field__label">🎯 Your Interests &amp; Passions</label>
+          <span class="field__hint">Press Enter or comma to add</span>
+        </div>
+        <div class="tag-input" id="interests-container">
+          <input id="interests-input" class="tag-input__field" placeholder="e.g. Problem Solving, Data, Design…" autocomplete="off" />
+        </div>
+        <div class="quick-add" id="interests-quick">
+          <span class="quick-add__label">Quick add:</span>
+          <button class="chip" onclick="addTag('interests','Data')">Data</button>
+          <button class="chip" onclick="addTag('interests','AI/ML')">AI/ML</button>
+          <button class="chip" onclick="addTag('interests','Web Dev')">Web Dev</button>
+          <button class="chip" onclick="addTag('interests','Finance')">Finance</button>
+          <button class="chip" onclick="addTag('interests','Design')">Design</button>
+          <button class="chip" onclick="addTag('interests','DevOps')">DevOps</button>
+        </div>
+      </div>
+
+      <!-- Level + Goals -->
+      <div class="field-row">
+        <div class="field">
+          <label class="field__label">🏁 Experience Level</label>
+          <div class="level-group" id="level-group">
+            <button class="level-btn" data-level="Fresher"      onclick="setLevel(this)">🌱 Fresher</button>
+            <button class="level-btn level-btn--active" data-level="Intermediate" onclick="setLevel(this)">🔥 Intermediate</button>
+            <button class="level-btn" data-level="Advanced"     onclick="setLevel(this)">⚡ Advanced</button>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field__label">🚀 Career Goals <span class="optional">(optional)</span></label>
+          <input id="goals-input" class="text-input" placeholder="e.g. High salary, remote work, startup culture…" />
+        </div>
+      </div>
+
+      <button class="btn btn--gold btn--full" id="analyze-btn" onclick="runAnalysis()">
+        <span id="analyze-btn-text">✨ Analyze My Career Path</span>
+        <span id="analyze-spinner" class="spinner hidden"></span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ RESUME ANALYZER ═══════════════════════════════════════════════════════ -->
+<section class="section" id="resume">
+  <div class="container">
+    <div class="section__label">Step 02 / Resume Analysis</div>
+    <h2 class="section__title">Analyze Your Resume</h2>
+    <p class="section__sub">Upload your PDF or DOCX resume and get an instant ATS score, skill extraction, and improvement tips.</p>
+
+    <div class="resume-card">
+
+      <!-- Drop Zone -->
+      <div class="drop-zone" id="drop-zone"
+           ondragover="handleDragOver(event)"
+           ondragleave="handleDragLeave(event)"
+           ondrop="handleDrop(event)">
+        <div class="drop-zone__icon" id="dz-icon">📄</div>
+        <div class="drop-zone__text" id="dz-text">
+          <strong>Drag &amp; drop your resume here</strong>
+          <span>or click to browse</span>
+        </div>
+        <div class="drop-zone__hint">Supports PDF and DOCX · Max 5MB</div>
+        <input type="file" id="resume-file-input" accept=".pdf,.docx,.doc"
+               onchange="handleResumeFileSelect(event)" class="hidden" />
+        <button class="btn btn--outline drop-zone__btn" onclick="document.getElementById('resume-file-input').click()">
+          Browse File
+        </button>
+      </div>
+
+      <!-- File Preview (hidden until file selected) -->
+      <div class="file-preview hidden" id="file-preview">
+        <div class="file-preview__icon" id="file-preview-icon">📄</div>
+        <div class="file-preview__info">
+          <span class="file-preview__name" id="file-preview-name">resume.pdf</span>
+          <span class="file-preview__size" id="file-preview-size">0 KB</span>
+        </div>
+        <button class="file-preview__remove" onclick="clearResumeFile()" title="Remove file">✕</button>
+      </div>
+
+      <button class="btn btn--gold btn--full" id="resume-btn" onclick="runResumeAnalysis()" disabled>
+        <span id="resume-btn-text">📊 Analyze Resume</span>
+        <span id="resume-spinner" class="spinner hidden"></span>
+      </button>
+
+      <!-- Resume Error -->
+      <div id="resume-error" class="error-banner hidden">
+        <span class="error-icon">⚠️</span>
+        <span id="resume-error-text">Something went wrong.</span>
+      </div>
+    </div>
+
+    <!-- Resume Results (hidden until analysis) -->
+    <div id="resume-results" class="hidden">
+
+      <!-- Score Row -->
+      <div class="resume-score-row">
+        <div class="score-card">
+          <div class="score-circle" id="resume-score-circle">
+            <svg viewBox="0 0 100 100" class="score-svg">
+              <circle class="score-track" cx="50" cy="50" r="42"/>
+              <circle class="score-fill" id="resume-score-fill" cx="50" cy="50" r="42"
+                      stroke-dasharray="0 264"/>
+            </svg>
+            <div class="score-inner">
+              <span class="score-num" id="resume-score-num">0</span>
+              <span class="score-label">/ 100</span>
+            </div>
+          </div>
+          <div class="score-card__info">
+            <h3 class="score-card__title">Resume Score</h3>
+            <p class="score-card__desc" id="resume-score-desc">Your ATS compatibility and content quality score.</p>
+            <div class="score-badge" id="resume-score-badge">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs resume-tabs">
+        <button class="tab tab--active" onclick="switchResumeTab(this,'r-skills')">🧠 Skills Found</button>
+        <button class="tab" onclick="switchResumeTab(this,'r-roles')">🎯 Best Roles</button>
+        <button class="tab" onclick="switchResumeTab(this,'r-tips')">💡 Improvements</button>
+        <button class="tab" onclick="switchResumeTab(this,'r-ats')">🔍 ATS Keywords</button>
+      </div>
+
+      <div class="tab-panel" id="tab-r-skills">
+        <div class="resume-section-title">✅ Extracted Skills</div>
+        <div class="tag-cloud" id="resume-skills-cloud"></div>
+        <div class="resume-section-title mt-20">❌ Missing Skills</div>
+        <div class="tag-cloud tag-cloud--missing" id="resume-missing-cloud"></div>
+      </div>
+
+      <div class="tab-panel hidden" id="tab-r-roles">
+        <div class="resume-roles-grid" id="resume-roles-grid"></div>
+      </div>
+
+      <div class="tab-panel hidden" id="tab-r-tips">
+        <div class="tips-list" id="resume-tips-list"></div>
+        <div class="strengths-list" id="resume-strengths-list"></div>
+      </div>
+
+      <div class="tab-panel hidden" id="tab-r-ats">
+        <div class="ats-info">
+          <p>Add these keywords to your resume to pass ATS filters at companies like TCS, Infosys, and MNCs.</p>
+        </div>
+        <div class="tag-cloud tag-cloud--ats" id="resume-ats-cloud"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ RESULTS ════════════════════════════════════════════════════════════════ -->
+<section class="section" id="results">
+  <div class="container">
+    <div class="section__label">Step 03 / Results</div>
+    <h2 class="section__title">Your Career Analysis</h2>
+
+    <!-- placeholder before analysis -->
+    <div id="results-placeholder" class="placeholder">
+      <div class="placeholder__icon">🔍</div>
+      <p class="placeholder__text">Run the analyzer above to see your personalized career insights.</p>
+    </div>
+
+    <!-- Loading skeletons -->
+    <div id="results-skeleton" class="hidden">
+      <div class="skeleton-banner"></div>
+      <div class="skeleton-tabs"></div>
+      <div class="skeleton-grid">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+    </div>
+
+    <!-- actual results (hidden until ready) -->
+    <div id="results-content" class="hidden">
+
+      <!-- Analytics Score Row -->
+      <div class="analytics-row" id="analytics-row">
+        <div class="analytics-card">
+          <div class="score-circle score-circle--sm">
+            <svg viewBox="0 0 100 100" class="score-svg">
+              <circle class="score-track" cx="50" cy="50" r="42"/>
+              <circle class="score-fill score-fill--blue" id="readiness-fill" cx="50" cy="50" r="42" stroke-dasharray="0 264"/>
+            </svg>
+            <div class="score-inner">
+              <span class="score-num score-num--sm" id="readiness-num">0</span>
+            </div>
+          </div>
+          <span class="analytics-label">Job Readiness</span>
+        </div>
+        <div class="analytics-card">
+          <div class="score-circle score-circle--sm">
+            <svg viewBox="0 0 100 100" class="score-svg">
+              <circle class="score-track" cx="50" cy="50" r="42"/>
+              <circle class="score-fill score-fill--green" id="match-fill" cx="50" cy="50" r="42" stroke-dasharray="0 264"/>
+            </svg>
+            <div class="score-inner">
+              <span class="score-num score-num--sm" id="match-num">0</span>
+            </div>
+          </div>
+          <span class="analytics-label">Career Match</span>
+        </div>
+        <div class="analytics-card">
+          <div class="score-circle score-circle--sm">
+            <svg viewBox="0 0 100 100" class="score-svg">
+              <circle class="score-track" cx="50" cy="50" r="42"/>
+              <circle class="score-fill score-fill--gold" id="learning-fill" cx="50" cy="50" r="42" stroke-dasharray="0 264"/>
+            </svg>
+            <div class="score-inner">
+              <span class="score-num score-num--sm" id="learning-num">0</span>
+            </div>
+          </div>
+          <span class="analytics-label">Learning Speed</span>
+        </div>
+        <div class="analytics-salary-card" id="analytics-salary">
+          <div class="analytics-salary__label">Top Predicted Salary</div>
+          <div class="analytics-salary__value" id="analytics-salary-val">—</div>
+          <div class="analytics-salary__sub">for your top career match</div>
+        </div>
+      </div>
+
+      <!-- Summary Banner -->
+      <div class="summary-banner" id="summary-text"></div>
+
+      <!-- Tabs -->
+      <div class="tabs tabs--scroll" id="results-tabs">
+        <button class="tab tab--active" data-tab="career"   onclick="switchTab(this,'career')">🎯 Career Paths</button>
+        <button class="tab"             data-tab="skills"   onclick="switchTab(this,'skills')">🏁 Skill Gaps</button>
+        <button class="tab"             data-tab="courses"  onclick="switchTab(this,'courses')">📚 Courses</button>
+        <button class="tab"             data-tab="certs"    onclick="switchTab(this,'certs')">🏆 Certifications</button>
+        <button class="tab"             data-tab="roadmap"  onclick="switchTab(this,'roadmap')">🗺 Roadmap</button>
+      </div>
+
+      <!-- Career Paths Tab -->
+      <div class="tab-panel" id="tab-career">
+        <div class="cards-grid" id="career-cards"></div>
+      </div>
+
+      <!-- Skill Gaps Tab -->
+      <div class="tab-panel hidden" id="tab-skills">
+        <div class="skills-list" id="skills-list"></div>
+      </div>
+
+      <!-- Courses Tab -->
+      <div class="tab-panel hidden" id="tab-courses">
+        <div class="cards-grid cards-grid--2" id="courses-cards"></div>
+      </div>
+
+      <!-- Certifications Tab -->
+      <div class="tab-panel hidden" id="tab-certs">
+        <div class="certs-intro">
+          <p>These certifications will significantly boost your profile for Indian IT companies and MNCs.</p>
+        </div>
+        <div class="certs-grid" id="certs-grid"></div>
+      </div>
+
+      <!-- Roadmap Tab -->
+      <div class="tab-panel hidden" id="tab-roadmap">
+        <div class="roadmap-list" id="roadmap-list"></div>
+      </div>
+
+    </div>
+
+    <!-- error state -->
+    <div id="results-error" class="error-banner hidden">
+      <span class="error-icon">⚠️</span>
+      <span id="results-error-text">Something went wrong. Please try again.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CHAT ═══════════════════════════════════════════════════════════════════ -->
+<section class="section" id="chat">
+  <div class="container">
+    <div class="section__label">Step 04 / Ask CareerBot</div>
+    <h2 class="section__title">Chat With Your Career Advisor</h2>
+    <p class="section__sub">Have follow-up questions? Ask CareerBot anything about careers, skills, or your analysis.</p>
+
+    <div class="chat-card">
+      <div class="chat-header">
+        <div class="chat-header__bot">
+          <div class="chat-header__avatar">🤖</div>
+          <div>
+            <div class="chat-header__name">CareerBot</div>
+            <div class="chat-header__status"><span class="status-dot"></span> Online</div>
+          </div>
+        </div>
+        <button class="btn-icon" onclick="clearChatHistory()" title="Clear chat">🗑</button>
+      </div>
+
+      <div class="chat-messages" id="chat-messages">
+        <div class="msg msg--bot">
+          <div class="msg__avatar">🤖</div>
+          <div class="msg__bubble">
+            Hi! I'm CareerBot 👋 I can answer questions about career paths, skill development,
+            salary expectations, or anything from your analysis above. What would you like to know?
+          </div>
+        </div>
+      </div>
+
+      <!-- Suggestions -->
+      <div class="chat-suggestions" id="chat-suggestions">
+        <button class="suggestion" onclick="sendSuggestion(this)">How long to get job-ready?</button>
+        <button class="suggestion" onclick="sendSuggestion(this)">Which skill should I learn first?</button>
+        <button class="suggestion" onclick="sendSuggestion(this)">What salary can I expect?</button>
+        <button class="suggestion" onclick="sendSuggestion(this)">Best companies to apply to?</button>
+        <button class="suggestion" onclick="sendSuggestion(this)">How to crack a tech interview?</button>
+      </div>
+
+      <div class="chat-input-row">
+        <input id="chat-input" class="chat-input" placeholder="Ask CareerBot anything…"
+               onkeydown="if(event.key==='Enter') sendChat()" />
+        <button class="btn btn--gold chat-send" id="chat-send-btn" onclick="sendChat()">
+          <span id="chat-send-text">Send ↑</span>
+          <span id="chat-send-spinner" class="spinner hidden"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HISTORY ════════════════════════════════════════════════════════════════ -->
+<section class="section section--compact" id="history">
+  <div class="container">
+    <div class="history-header">
+      <div>
+        <div class="section__label">Saved / History</div>
+        <h2 class="section__title section__title--sm">Previous Analyses</h2>
+      </div>
+      <button class="btn btn--danger-outline" onclick="clearAllHistory()" id="clear-history-btn" style="display:none">Clear All</button>
+    </div>
+    <div id="history-list" class="history-list">
+      <div class="placeholder">
+        <div class="placeholder__icon">📂</div>
+        <p class="placeholder__text">Your previous analyses will appear here automatically.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ═════════════════════════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="nav__logo footer__logo">
+    <span class="nav__dot"></span>
+    <span class="nav__brand">CareerAI</span>
+  </div>
+  <p class="footer__sub">Powered by Google Gemini AI · Built for career seekers across India</p>
+  <p class="footer__disclaimer">AI-generated suggestions only. Always validate with industry professionals.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
